@@ -6,6 +6,7 @@ import (
 	"net/http"
 )
 
+// H 用于存储JSON数据，在构建JSON数据时能更加简洁
 type H map[string]interface{}
 
 type Context struct {
@@ -51,10 +52,12 @@ func (c *Context) Param(key string) string {
 	return val
 }
 
+// Query 查询Query参数
 func (c *Context) Query(key string) string {
 	return c.Req.URL.Query().Get(key)
 }
 
+// PostForm 查询PostForm参数
 func (c *Context) PostForm(key string) string {
 	return c.Req.FormValue(key)
 }
@@ -68,12 +71,14 @@ func (c *Context) SetHeader(key string, value string) {
 	c.Writer.Header().Set(key, value)
 }
 
+// String 构造返回字符串的HTTP响应
 func (c *Context) String(code int, format string, values ...interface{}) {
 	c.SetHeader("Content-Type", "text/plain")
 	c.Status(code)
 	c.Writer.Write([]byte(fmt.Sprintf(format, values...)))
 }
 
+// JSON 构造返回JSON的HTTP响应
 func (c *Context) JSON(code int, obj interface{}) {
 	c.SetHeader("Content-Type", "application/json")
 	c.Status(code)
@@ -83,11 +88,13 @@ func (c *Context) JSON(code int, obj interface{}) {
 	}
 }
 
+// Data 构造返回字符数组的HTTP响应
 func (c *Context) Data(code int, data []byte) {
 	c.Status(code)
 	c.Writer.Write(data)
 }
 
+// HTML 构造返回HTML的HTTP响应
 // HTML template render
 // refer https://golang.org/pkg/html/template/
 func (c *Context) HTML(code int, name string, data interface{}) {

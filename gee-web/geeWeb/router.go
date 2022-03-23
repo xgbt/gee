@@ -43,6 +43,7 @@ func (r *router) addRoute(method string, pattern string, handler HandlerFunc) {
 }
 
 func (r *router) getRoute(method string, pattern string) (*node, map[string]string) {
+	// 获取Method根节点
 	root, ok := r.roots[method]
 	if !ok {
 		return nil, nil
