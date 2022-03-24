@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="762b61fb-45a2-4aa4-aa2b-5384e9197ee9" name="cloud">
+        <fileTransfer rootFolder="/root/go/src/gee" accessType="SFTP" host="175.178.18.125" port="22" sshConfigId="945f4f14-255f-40a6-a3e1-ca14d3acb64e" sshConfig="root@175.178.18.125:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

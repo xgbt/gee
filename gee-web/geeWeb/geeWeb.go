@@ -14,10 +14,10 @@ type HandlerFunc func(*Context)
 // Engine 实现ServeHTTP的接口
 type (
 	RouterGroup struct {
-		prefix      string
-		middlewares []HandlerFunc // 提供中间件
-		parent      *RouterGroup  // support nesting
-		engine      *Engine       // all groups share an Engine instance
+		prefix      string        // 前缀，例如 / , /api
+		middlewares []HandlerFunc // 存储当前分组应用的中间件
+		parent      *RouterGroup  // 存储当前分组的父节点
+		engine      *Engine       // 所有路由分组都共享同一个Engine实例
 	}
 
 	Engine struct {
@@ -44,7 +44,7 @@ func Default() *Engine {
 	return engine
 }
 
-// Group 构建路由分组，所有路由分组都共享相同的Engine实例
+// Group 构建路由分组
 func (group *RouterGroup) Group(prefix string) *RouterGroup {
 	engine := group.engine
 	newGroup := &RouterGroup{
@@ -64,6 +64,7 @@ func (group *RouterGroup) Use(middlewares ...HandlerFunc) {
 func (group *RouterGroup) addRoute(method string, comp string, handler HandlerFunc) {
 	pattern := group.prefix + comp
 	log.Printf("Route %4s - %s", method, pattern)
+	// 由于`Engine`从某种意义上继承了`RouterGroup`的所有属性和方法，因为 (*Engine).engine 是指向自己的。
 	group.engine.router.addRoute(method, pattern, handler)
 }
 
@@ -124,5 +125,6 @@ func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	}
 	c := newContext(w, req)
 	c.handlers = middlewares
+	c.engine = engine
 	engine.router.handle(c)
 }

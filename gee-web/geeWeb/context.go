@@ -37,7 +37,8 @@ func newContext(w http.ResponseWriter, req *http.Request) *Context {
 }
 
 func (c *Context) Next() {
-	for c.idx++; c.idx < len(c.handlers); c.idx++ {
+	c.idx++
+	for ; c.idx < len(c.handlers); c.idx++ {
 		c.handlers[c.idx](c)
 	}
 }

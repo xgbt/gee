@@ -7,11 +7,11 @@ import (
 
 func Logger() HandlerFunc {
 	return func(c *Context) {
-		// Start timer
+		// 启动计时器
 		t := time.Now()
-		// Process request
+		// 执行请求
 		c.Next()
-		// Calculate resolution time
+		// 计算执行时间
 		log.Printf("[%d] %s in %v", c.StatusCode, c.Req.RequestURI, time.Since(t))
 	}
 }

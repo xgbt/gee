@@ -6,8 +6,8 @@ import (
 )
 
 type router struct {
-	roots    map[string]*node
-	handlers map[string]HandlerFunc
+	roots    map[string]*node       // 存储每种请求方法的Trie树根节点，例如roots['GET']，roots['POST']
+	handlers map[string]HandlerFunc // 存储各种路由的HandlerFunc，例如handlers['GET-/p/:lang/doc'],handlers['POST-/p/book']
 }
 
 func newRouter() *router {
@@ -35,9 +35,10 @@ func (r *router) addRoute(method string, pattern string, handler HandlerFunc) {
 	if _, ok := r.roots[method]; !ok {
 		r.roots[method] = new(node)
 	}
+
 	parts := parsePattern(pattern)
 	r.roots[method].insert(pattern, parts, 0)
-	// key 由请求方法和路由地址构成
+
 	key := method + "-" + pattern
 	r.handlers[key] = handler
 }
@@ -49,10 +50,12 @@ func (r *router) getRoute(method string, pattern string) (*node, map[string]stri
 		return nil, nil
 	}
 
+	// pattern存储的是原始路由，例如 p/go/doc
 	searchParts := parsePattern(pattern)
 	n := root.search(searchParts, 0)
 	if n != nil {
 		params := make(map[string]string)
+		// n.pattern存储的是解析路由，例如p/:lang/doc
 		parts := parsePattern(n.pattern)
 		for idx, part := range parts {
 			if part[0] == ':' {

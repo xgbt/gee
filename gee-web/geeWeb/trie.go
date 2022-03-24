@@ -19,7 +19,8 @@ func (n *node) String() string {
 // 返回第一个匹配成功的节点，用于insert操作
 func (n *node) matchChild(part string) *node {
 	for _, child := range n.children {
-		if child.part == part || child.isWild {
+		// 动态匹配做强校验,防止路由注册覆盖
+		if child.part == part || ((part[0] == ':' || part[0] == '*') && child.isWild) {
 			return child
 		}
 	}
@@ -29,11 +30,16 @@ func (n *node) matchChild(part string) *node {
 // 返回所有匹配成功的节点，用于search
 func (n *node) matchChildren(part string) []*node {
 	nodes := make([]*node, 0)
+	wildNodes := make([]*node, 0)
 	for _, child := range n.children {
-		if child.part == part || child.isWild {
+		// 静态路由节点优先,动态路由节点延后
+		if child.part == part {
 			nodes = append(nodes, child)
+		} else if child.isWild {
+			wildNodes = append(wildNodes, child)
 		}
 	}
+	nodes = append(nodes, wildNodes...)
 	return nodes
 }
 
